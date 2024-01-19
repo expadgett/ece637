@@ -3,7 +3,7 @@ CC = gcc
 CFLAGS = -std=c99 -Wall -pedantic
 BIN = ../bin
 
-all: ImageReadWriteExample SurrogateFunctionExample SolveExample firlpf
+all: ImageReadWriteExample SurrogateFunctionExample SolveExample firlpf firsf
 
 clean:
 	/bin/rm *.o $(BIN)/*
@@ -25,4 +25,8 @@ SolveExample: SolveExample.o $(OBJ)
 firlpf: firlpf.o $(OBJ)
 	$(CC) $(CFLAGS) -o firlpf firlpf.o $(OBJ) -lm
 	mv firlpf $(BIN)
+    
+firsf: firsf.o $(OBJ)
+	$(CC) $(CFLAGS) -o firsf firsf.o $(OBJ) -lm
+	mv firsf $(BIN)
 

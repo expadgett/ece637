@@ -5,8 +5,9 @@
 #include "randlib.h"
 #include "typeutil.h"
 
-#define fheight 9
-#define fwidth 9
+#define fheight 5
+#define fwidth 5
+
 void error(char *name);
 uint8_t clipped (double pixel){ //restrict values to less than 255 and greater than 0 like in example
   uint8_t color_pixel;
@@ -27,9 +28,15 @@ int main (int argc, char **argv)
 {
   FILE *fp;
   struct TIFF_img input_img, output_img;
+  double lambda, delta;
+  char *lambdastr;
+  char image_name[100];
+
   double red, green, blue; //initialise red, green, blue matrices for each layer of the image
  
-  if ( argc != 2 ) error( argv[0] );
+  if ( argc != 3 ) error( argv[0] );
+
+  lambda=strtod(argv[2], &lambdastr);
 
   /* open image file */
   if ( ( fp = fopen ( argv[1], "rb" ) ) == NULL ) {
@@ -57,7 +64,13 @@ int main (int argc, char **argv)
   double h[fheight][fwidth];
   for (int i=0; i<fheight; i++){
     for (int j=0; j<fwidth; j++){
-      h[i][j]=1.0/81;
+      if (j==2 && i==2){ //0th index
+        delta=1;
+      }
+      else{
+        delta=0;
+      }
+      h[i][j]=delta+lambda*(delta-(1.0/25));
     }
   }
   
@@ -87,9 +100,9 @@ int main (int argc, char **argv)
       }
     }
   }
-  
+  sprintf(image_name, "firsf%f.tif",lambda);
   /* open color image file */
-  if ( ( fp = fopen ( "lpfimage.tif", "wb" ) ) == NULL ) {
+  if ( ( fp = fopen ( image_name, "wb" ) ) == NULL ) {
       fprintf ( stderr, "cannot open file color.tif\n");
       exit ( 1 );
   }
