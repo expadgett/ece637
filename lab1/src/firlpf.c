@@ -5,16 +5,30 @@
 #include "randlib.h"
 #include "typeutil.h"
 
+#define fheight 9
+#define fwidth 9
 void error(char *name);
-
+uint8_t clipped (double pixel){ //restrict values to less than 255 and greater than 0 like in example
+  uint8_t color_pixel;
+  if (pixel>255){
+    color_pixel=255;
+  }
+  else if (pixel<0){
+    color_pixel=0;
+  }
+  else{
+    color_pixel=(uint8_t)pixel; //cast to uint8_t 
+  }
+  return color_pixel;
+}
+ 
 
 int main (int argc, char **argv) 
 {
   FILE *fp;
-  struct TIFF_img input_img, green_img, color_img; //, output_img;
-  double **img1,**img2;
-  int32_t i,j,pixel;
-
+  struct TIFF_img input_img, output_img;
+  double red, green, blue; //initialise red, green, blue matrices for each layer of the image
+ 
   if ( argc != 2 ) error( argv[0] );
 
   /* open image file */
@@ -37,102 +51,52 @@ int main (int argc, char **argv)
     fprintf ( stderr, "error:  image must be 24-bit color\n" );
     exit ( 1 );
   }
-
-  /* Allocate image of double precision floats */
-  img1 = (double **)get_img(input_img.width,input_img.height,sizeof(double));
-  img2 = (double **)get_img(input_img.width,input_img.height,sizeof(double));
-
+  
   /* FIR LPF
     Define h[m,n]*/
-  double h[9][9]={{1/81}};
-  for (int i=0; i<9; i++){
-    for (int j=0; j<9; j++){
+  double h[fheight][fwidth];
+  for (int i=0; i<fheight; i++){
+    for (int j=0; j<fwidth; j++){
       h[i][j]=1.0/81;
-      printf("%f\n",h[i][j]);
     }
   }
-
-
-  /* copy green component to double array */
-  for ( i = 0; i < input_img.height; i++ )
-  for ( j = 0; j < input_img.width; j++ ) {
-    img1[i][j] = input_img.color[1][i][j];
-  }
-
-  /* Filter image along horizontal direction */
-  for ( i = 0; i < input_img.height; i++ )
-  for ( j = 1; j < input_img.width-1; j++ ) {
-    img2[i][j] = (img1[i][j-1] + img1[i][j] + img1[i][j+1])/3.0;
-  }
-
-  /* Fill in boundary pixels */
-  for ( i = 0; i < input_img.height; i++ ) {
-    img2[i][0] = 0;
-    img2[i][input_img.width-1] = 0;
-  }
-
-  /* Set seed for random noise generator */
-  srandom2(1);
-
-  /* Add noise to image */
-  for ( i = 0; i < input_img.height; i++ )
-  for ( j = 1; j < input_img.width-1; j++ ) {
-    img2[i][j] += 32*normal();
-  }
-
-  /* set up structure for output achromatic image */
+  
+  /* set up structure for output image */
   /* to allocate a full color image use type 'c' */
-  get_TIFF ( &green_img, input_img.height, input_img.width, 'g' );
-    
-  /* set up structure for output color image */
-  /* Note that the type is 'c' rather than 'g' */
-  get_TIFF ( &color_img, input_img.height, input_img.width, 'c' );
+  get_TIFF ( &output_img, input_img.height, input_img.width, 'c' );
 
-  /* copy green component to new images */
-  for ( i = 0; i < input_img.height; i++ )
-  for ( j = 0; j < input_img.width; j++ ) {
-    pixel = (int32_t)img2[i][j];
-    if(pixel>255) {
-      green_img.mono[i][j] = 255;
-    }
-    else {
-      if(pixel<0) green_img.mono[i][j] = 0;
-      else green_img.mono[i][j] = pixel;
-    }
-  }
-
-  /* Illustration: constructing a sample color image -- interchanging the red and green components from the input color image */
-  for ( i = 0; i < input_img.height; i++ )
-      for ( j = 0; j < input_img.width; j++ ) {
-          color_img.color[0][i][j] = input_img.color[1][i][j];
-          color_img.color[1][i][j] = input_img.color[0][i][j];
-          color_img.color[2][i][j] = input_img.color[2][i][j];
+  /*filter image using h*/
+  for (int i=0; i<input_img.height; i++){
+    for (int j=0; j<input_img.width; j++){ //initalize red, green, blue to 0 before filteing for 0 padding to satisfy free boundary
+      red=0.0;
+      green=0.0;
+      blue=0.0;
+      for (int m=0; m<=fheight; m++){
+        for (int n=0; n<=fwidth; n++){
+          if (i-m<input_img.height&& i-m>=0 && j-n<input_img.width && j-n>=0){ //ie if the row/column edited in the matrix is in the image
+            red+=h[m][n]*input_img.color[0][i-m][j-n]; //red is the first layer
+            green+=h[m][n]*input_img.color[1][i-m][j-n]; //green is the second layer
+            blue+=h[m][n]*input_img.color[2][i-m][j-n]; //blue is the third layer
+          
+          }   
+        }
+      output_img.color[0][i][j]=clipped(red);
+      output_img.color[1][i][j]=clipped(green);
+      output_img.color[2][i][j]=clipped(blue);
       }
-
-  /* open green image file */
-  if ( ( fp = fopen ( "green.tif", "wb" ) ) == NULL ) {
-    fprintf ( stderr, "cannot open file green.tif\n");
-    exit ( 1 );
+    }
   }
 
-  /* write green image */
-  if ( write_TIFF ( fp, &green_img ) ) {
-    fprintf ( stderr, "error writing TIFF file %s\n", argv[2] );
-    exit ( 1 );
-  }
 
-  /* close green image file */
-  fclose ( fp );
-    
     
   /* open color image file */
-  if ( ( fp = fopen ( "color.tif", "wb" ) ) == NULL ) {
+  if ( ( fp = fopen ( "lpfimage.tif", "wb" ) ) == NULL ) {
       fprintf ( stderr, "cannot open file color.tif\n");
       exit ( 1 );
   }
     
   /* write color image */
-  if ( write_TIFF ( fp, &color_img ) ) {
+  if ( write_TIFF ( fp, &output_img ) ) {
       fprintf ( stderr, "error writing TIFF file %s\n", argv[2] );
       exit ( 1 );
   }
@@ -142,11 +106,7 @@ int main (int argc, char **argv)
 
   /* de-allocate space which was used for the images */
   free_TIFF ( &(input_img) );
-  free_TIFF ( &(green_img) );
-  free_TIFF ( &(color_img) );
-  
-  free_img( (void**)img1 );
-  free_img( (void**)img2 );  
+  free_TIFF ( &(output_img) );
 
   return(0);
 }
