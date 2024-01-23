@@ -62,13 +62,25 @@ int main (int argc, char **argv)
   /* FIR LPF
     Define h[m,n]*/
   double h[fheight][fwidth];
+
+  // double (*h)[fheight];
+  // h = malloc(sizeof(*h) * fwidth);
+  // h = malloc(sizeof(double[fheight][fwidth]));
+  // double *h[fheight];
+	// for (int i = 0; i < fheight; i++) {
+	// 	h[i] = (double *)malloc(fwidth * sizeof(double));
+	// }
+  // double *h[fheight];
+  // for (int i=0; i<fheight; i++){
+  //   h[i]=(double *)malloc(fwidth * sizeof(double));
+  // }
   for (int i=0; i<fheight; i++){
     for (int j=0; j<fwidth; j++){
       if (j==2 && i==2){ //0th index
-        delta=1;
+        delta=1.1;
       }
       else{
-        delta=0;
+        delta=0.0;
       }
       h[i][j]=delta+lambda*(delta-(1.0/25));
     }
