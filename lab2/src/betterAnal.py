@@ -9,6 +9,7 @@ Created on Sun Jan 24 18:54:16 2021
 import numpy as np                 # Numpy is a library support computation of large, multi-dimensional arrays and matrices.
 from PIL import Image              # Python Imaging Library (abbreviated as PIL) is a free and open-source additional library for the Python programming language that adds support for opening, manipulating, and saving many different image file formats.
 import matplotlib.pyplot as plt    # Matplotlib is a plotting library for the Python programming language.
+import math
 
 # Read in a gray scale TIFF image.
 im = Image.open('img04g.tif')
@@ -16,7 +17,7 @@ print('Read img04.tif.')
 print('Image size: ', im.size)
 
 # Display image object by PIL.
-im.show(title='image')
+# im.show(title='image')
 
 # Import Image Data into Numpy array.
 # The matrix x contains a 2-D array of 8-bit gray scale values. 
@@ -24,30 +25,43 @@ x = np.array(im)
 print('Data type: ', x.dtype)
 
 # Display numpy array by matplotlib.
-plt.imshow(x, cmap=plt.cm.gray)
-plt.title('Image')
-print("size: ", im.size)
-# Set colorbar location. [left, bottom, width, height].
-cax =plt.axes([0.9, 0.15, 0.04, 0.7]) 
-plt.colorbar(cax=cax)
-plt.show()
+# plt.imshow(x, cmap=plt.cm.gray)
+# plt.title('Image')
+# print("size: ", im.size)
+# # Set colorbar location. [left, bottom, width, height].
+# cax =plt.axes([0.9, 0.15, 0.04, 0.7]) 
+# plt.colorbar(cax=cax)
+# plt.show()
 
-x = np.double(x)/255.0
+#define size
+N =64
 
-i = 99
-j = 99
-N = 256
+#define X from image
+X = np.double(x)
 
-z = x[i:N+i, j:N+j]
+#define hamming window
+W=np.outer(np.hamming(N),np.hamming(N))
 
-# Compute the power spectrum for the NxN region.
-Z = (1/N**2)*np.abs(np.fft.fft2(z))**2
+#get dimensions
+height=im.size[0]
+width=im.size[1]
 
-# Use fftshift to move the zero frequencies to the center of the plot.
-Z = np.fft.fftshift(Z)
-
-# Compute the logarithm of the Power Spectrum.
-Zabs = np.log(Z)
+# find center of image
+hstart=math.floor((height-(5*N))/2)
+wstart=math.floor((width-(5*N))/2)
+#initalize Z to 0s that are appropriate size
+Z=np.zeros((N,N))
+for i in range(1,6):
+    for j in range(1,6):
+        l=np.arange(hstart+(i-1)*N, hstart+i*N)
+        m=np.arange(wstart+(j-1)*N, wstart+j*N)
+        z=X[m,l] 
+        Z=np.fft.fftshift((1/N**2)*np.abs(np.fft.fft2(z*W))**2)+Z
+        # Z=Z+np.log((1/N**2)*np.power(np.abs(np.fft.fftshift(np.fft.fft2(np.multiply(z,W)))),2))
+        # Z=Z+np.fft.fftshift(np.abs(np.power(np.fft.fft2(np.multiply(z,W))),2)*(1/N**2))
+        # Z=Z+np.fft.fftshift((1/N**2)*np.abs(np.fft.fft2(np.multiply(z,W)))**2)
+#average        
+Zabs=np.log(Z/25)
 
 # Plot the result using a 3-D mesh plot and label the x and y axises properly. 
 fig = plt.figure()
