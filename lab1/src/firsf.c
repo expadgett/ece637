@@ -61,7 +61,9 @@ int main (int argc, char **argv)
   
   /* FIR LPF
     Define h[m,n]*/
+  // double h[fheight][fwidth];
   double h[fheight][fwidth];
+
   for (int i=0; i<fheight; i++){
     for (int j=0; j<fwidth; j++){
       if (j==2 && i==2){ //0th index
@@ -71,6 +73,7 @@ int main (int argc, char **argv)
         delta=0;
       }
       h[i][j]=delta+lambda*(delta-(1.0/25));
+      // h[i][j]=1;
     }
   }
   
@@ -103,6 +106,7 @@ int main (int argc, char **argv)
   sprintf(image_name, "firsf%f.tif",lambda);
   /* open color image file */
   if ( ( fp = fopen ( image_name, "wb" ) ) == NULL ) {
+  // if ( ( fp = fopen ("test.tif", "wb" ) ) == NULL ) {
       fprintf ( stderr, "cannot open file color.tif\n");
       exit ( 1 );
   }
