@@ -8,13 +8,14 @@ def betterSpecAnalyse(x, windowSize, nWindows, showWindow=False, saveWindow=""):
     yCenter = x.shape[1]//2
 
     nWindowsx = nWindowsy = int(math.sqrt(nWindows))//2
+    print(nWindowsx)
     startIndices = []
     for i in range(-nWindowsx, nWindowsx+1):
         for j in range(-nWindowsy, nWindowsy+1):
             startI = int(xCenter + (i-0.5)*windowSize)
             startJ = int(yCenter + (j-0.5)*windowSize)
             startIndices.append(tuple((startI, startJ)))
-
+    print(startIndices)
     if showWindow:
         a = Image.fromarray(x).convert("RGB")
         draw = ImageDraw.Draw(a)

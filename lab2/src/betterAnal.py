@@ -52,18 +52,28 @@ wstart=math.floor((width-(5*N))/2)
 print(hstart)
 print(wstart)
 #initalize Z to 0s that are appropriate size
-Z=np.zeros((N,N))
-for i in range(1,6):
-    for j in range(1,6):
+pow=np.zeros((N,N))
+for j in range(1,6):
+    for i in range(1,6):
+        stari=hstart+(i-1)*N
+        starj=wstart+(j-1)*N
+        print(starj, stari)
         l=np.arange(hstart+(i-1)*N, hstart+i*N)
         m=np.arange(wstart+(j-1)*N, wstart+j*N)
-        z=X[m,l] 
-        Z=np.fft.fftshift((1/N**2)*np.abs(np.fft.fft2(z*W))**2)+Z
+        z=X[starj:starj+N, stari:stari+N]
+        print(z.shape)
+        # z=X[m,l] 
+        z=z*W
+        Z=(1/N**2)*np.abs(np.fft.fft2(z))**2
+        Z=np.fft.fftshift(Z)
+    #    pow+=np.fft.fftshift((1/N**2)*np.abs(np.fft.fft2(z))**2)
+        pow+=Z
+        # Z=np.fft.fftshift((1/N**2)*np.abs(np.fft.fft2(z*W))**2)+Z
         # Z=Z+np.log((1/N**2)*np.power(np.abs(np.fft.fftshift(np.fft.fft2(np.multiply(z,W)))),2))
         # Z=Z+np.fft.fftshift(np.abs(np.power(np.fft.fft2(np.multiply(z,W))),2)*(1/N**2))
         # Z=Z+np.fft.fftshift((1/N**2)*np.abs(np.fft.fft2(np.multiply(z,W)))**2)
 #average        
-Zabs=np.log(Z/25)
+Zabs=np.log(pow/25)
 
 # Plot the result using a 3-D mesh plot and label the x and y axises properly. 
 fig = plt.figure()
