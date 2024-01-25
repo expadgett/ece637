@@ -59,14 +59,6 @@ int main (int argc, char **argv)
   green = (double **)get_img(input_img.width,input_img.height,sizeof(double));
   blue = (double **)get_img(input_img.width,input_img.height,sizeof(double));
   
-  // for (int i=0; i<input_img.height; i++){
-  //   for (int j=0; j<input_img.width; j++){
-  //     red[i][j]=0;
-  //     green[i][j]=0;
-  //     blue[i][j]=0;
-  //   }
-  // }
-
   /*filter image using h*/
   for (int i=0; i<input_img.height; i++){
     for (int j=0; j<input_img.width; j++){ //initalize red, green, blue to 0 before filteing for 0 padding to satisfy free boundary
