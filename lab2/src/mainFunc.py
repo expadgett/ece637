@@ -8,39 +8,39 @@ from specAnalFunctions import betterSpecAnaly, plotPSF, specAnal
 if __name__== '__main__':
     image=sys.argv[1]
     show=sys.argv[2]
-    # # Read in a gray scale TIFF image.
-    # im = Image.open(image)
-    # print('Read'+str(image))
-    # print('Image size: ', im.size)
+    # Read in a gray scale TIFF image.
+    im = Image.open(image)
+    print('Read'+str(image))
+    print('Image size: ', im.size)
 
-    # # Display image object by PIL.
-    # im.show(title='image')
+    # Display image object by PIL.
+    im.show(title='image')
 
-    # # Import Image Data into Numpy array.
-    # # The matrix x contains a 2-D array of 8-bit gray scale values. 
-    # x = np.array(im)
-    # print('Data type: ', x.dtype)
+    # Import Image Data into Numpy array.
+    # The matrix x contains a 2-D array of 8-bit gray scale values. 
+    x = np.array(im)
+    print('Data type: ', x.dtype)
 
-    # # Display numpy array by matplotlib.
-    # plt.imshow(x, cmap=plt.cm.gray)
-    # plt.title('Image')
-    # print("size: ", im.size)
-    # # Set colorbar location. [left, bottom, width, height].
-    # cax =plt.axes([0.9, 0.15, 0.04, 0.7]) 
-    # plt.colorbar(cax=cax)
-    # plt.show()
+    # Display numpy array by matplotlib.
+    plt.imshow(x, cmap=plt.cm.gray)
+    plt.title('Image')
+    print("size: ", im.size)
+    # Set colorbar location. [left, bottom, width, height].
+    cax =plt.axes([0.9, 0.15, 0.04, 0.7]) 
+    plt.colorbar(cax=cax)
+    plt.show()
 
-    # x = np.array(im).astype(np.double)
-    # Ns=[64, 128,256]
-    # for i in Ns:
-    #     psf=specAnal(x, i)
-    #     title=f"PSF with window: {i}"
-    #     fname=f"psf{i}.png"
-    #     plotPSF(psf,i,title, fname, show)
+    x = np.array(im).astype(np.double)
+    Ns=[64, 128,256]
+    for i in Ns:
+        psf=specAnal(x, i)
+        title=f"PSD with window: {i}"
+        fname=f"psf{i}.png"
+        plotPSF(psf,i,title, fname, show)
         
-    # N=64 
-    # betterPsf=betterSpecAnaly(x, N, 25)
-    # plotPSF(betterPsf, N, "Section 1.3 PSF Plot", "psf_25.png", show)
+    N=64 
+    betterPsf=betterSpecAnaly(x, N, 25)
+    plotPSF(betterPsf, N, "Section 1.3 PSD Plot", "psf_25.png", show)
 
     #Part 2
     N=64
@@ -60,11 +60,6 @@ if __name__== '__main__':
 
     shiftedy=y+127    
     plt.imshow(shiftedy,cmap=plt.cm.gray)
-    # ax=plt.gca()
-    # ax.set_axis_off()
-    # imgy=Image.fromarray(shiftedy.astype(np.uint8))
-    # plt.savefig("scaled_y.png")
-    # print(y.shape)
     
     a=b= np.linspace(-np.pi, np.pi, N)
     X, Y = np.meshgrid(a, b)
@@ -74,26 +69,8 @@ if __name__== '__main__':
     Sname=f"theoretical_y.png"
     plotPSF(S_y, N, Stitle, Sname, True)
 
-    # fig=plt.figure(figsize=(16,8))
-    # ax=plt.gca()
-    # ax.set_axis_off()
-    # ax=fig.add_subplot(121, projection='3d')
-    # surf = ax.plot_surface(X, Y, S_y, cmap=plt.cm.coolwarm)
-    # ax.set_xlabel('$\\mu$ axis')
-    # ax.set_ylabel('$\\nu$ axis')
-    # ax.set_zlabel('Z Label')
-    # fig.colorbar(surf, shrink=0.5, aspect=5)
-    
-    # ax.fig.add_subplot(122)
-    # cont=ax.contourf(X,Y,S_y, cmap=plt.cm.coolwarm)
-    # ax.set_xlabel('$\\mu$ axis')
-    # ax.set_ylabel('$\\nu$ axis')
-    # plt.title("Theoretical Y Magnitude")
-    # plt.savefig("theoretical_y.png")
-    # plt.show()
-
     ypsfbetter=betterSpecAnaly(y,N, 25)
-    ytitle=f"PSF of Y"
+    ytitle=f"PSD of Y"
     yname=f"ypsf_better.png"
     plotPSF(ypsfbetter,N, ytitle,yname,True)
 
