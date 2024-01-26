@@ -3,53 +3,72 @@ from PIL import Image, ImageDraw
 import matplotlib.pyplot as plt
 import math
 
+def specAnal(x, N):
+    i = 99
+    j = 99
+
+    z = x[i:N+i, j:N+j]
+
+    # Compute the power spectrum for the NxN region.
+    Z = (1/N**2)*np.abs(np.fft.fft2(z))**2
+
+    # Use fftshift to move the zero frequencies to the center of the plot.
+    Z = np.fft.fftshift(Z)
+
+    # Compute the logarithm of the Power Spectrum.
+    Zabs = np.log(Z)
+    return Zabs
+
+
 def betterSpecAnaly(x, N,winSize):
-    height=x.shape[0]
-    width=x.shape[1]
+    height=x.shape[1]
+    width=x.shape[0]
     hstart=math.floor((height-(5*N))/2)
     wstart=math.floor((width-(5*N))/2)
-    Z=np.zeros((N,N))
-
-    upRtCn=[]
-    winx=winy=int(math.sqrt(winSize))//2
-    for i in range(1,winx):
-        for j in range(1,winy):
-            l=hstart+(i-1)*N
-            m=wstart+(j-1)*N 
-            upRtCn.append(tuple((l,m)))
+    psf=np.zeros((N,N))
 
     W=np.outer(np.hamming(N),np.hamming(N))
-    pow=np.zeros((N,N))
-    for (i, j) in upRtCn:
-       print(i, j)
-       z=x[i:i+N, j:j+N]
-       z=W * z
-       Z=(1/N**2)*np.abs(np.fft.fft2(z))**2
-       Z=np.fft.fftshift(Z)
-    #    pow+=np.fft.fftshift((1/N**2)*np.abs(np.fft.fft2(z))**2)
-       pow+=Z
-       
-    pow*=(1/winSize) 
-    logpow=np.log(pow)
-    
-    # Z=np.log(Z/winSize)
-    print(pow.shape)
-    return logpow
+ 
+    for j in range (1,6):
+        for i in range(1,6):
+            starj=hstart+(i-1)*N
+            stari=wstart+(j-1)*N
+            z=x[stari:stari+N, starj:starj+N]
+            z=z*W
+            Z=(1/N**2)*np.abs(np.fft.fft2(z))**2
+            Z=np.fft.fftshift(Z)
+            psf+=Z
 
-    # fig = plt.figure()
-    # ax = fig.add_subplot(111, projection='3d')
-    # a = b = np.linspace(-np.pi, np.pi, N)
-    # X, Y = np.meshgrid(a, b)
+    logpsf=np.log(psf/25) 
+    return logpsf
 
-    # surf = ax.plot_surface(X, Y, Z, cmap=plt.cm.coolwarm)
+def plotPSF(Z, N, title="", save="", show=True):
 
-    # ax.set_xlabel('$\\mu$ axis')
-    # ax.set_ylabel('$\\nu$ axis')
-    # ax.set_zlabel('Z Label')
+    a = b = np.linspace(-np.pi, np.pi, N)
+    X, Y = np.meshgrid(a, b)
 
-    # fig.colorbar(surf, shrink=0.5, aspect=5)
+    fig = plt.figure(figsize=(16,8))
+    if title:
+        plt.title(title)
+    ax=plt.gca()
+    ax.set_axis_off()
 
-    # plt.show()
+    ax = fig.add_subplot(121, projection='3d')
+    surf = ax.plot_surface(X, Y, Z, cmap=plt.cm.coolwarm)
+    ax.set_xlabel('$\\mu$ axis')
+    ax.set_ylabel('$\\nu$ axis')
+    ax.set_zlabel('Z Label')
+    fig.colorbar(surf, shrink=0.5, aspect=5)
+
+    ax=fig.add_subplot(122)
+    cont=ax.contourf(X,Y,Z, cmap=plt.cm.coolwarm)
+    ax.set_xlabel('$\\mu$ axis')
+    ax.set_ylabel('$\\nu$ axis')
+
+    if save:
+        plt.savefig(save)
+    if show:
+        plt.show()
 
 def plotSpecAnalyse(S, windowSize, plotTitle="", savePlot="", showPlot=True):
     u = v = np.linspace(-np.pi, np.pi, windowSize)
