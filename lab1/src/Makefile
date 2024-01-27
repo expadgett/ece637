@@ -8,7 +8,7 @@ all: ImageReadWriteExample SurrogateFunctionExample SolveExample firlpf firsf ii
 clean:
 	/bin/rm *.o $(BIN)/*
 
-OBJ = tiff.o allocate.o randlib.o qGGMRF.o solve.o
+OBJ = tiff.o allocate.o randlib.o qGGMRF.o solve.o area_fill.o
 
 ImageReadWriteExample: ImageReadWriteExample.o $(OBJ) 
 	$(CC) $(CFLAGS) -o ImageReadWriteExample ImageReadWriteExample.o $(OBJ) -lm

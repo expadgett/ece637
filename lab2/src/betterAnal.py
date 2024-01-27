@@ -58,8 +58,6 @@ for j in range(1,6):
         stari=hstart+(i-1)*N
         starj=wstart+(j-1)*N
         print(starj, stari)
-        l=np.arange(hstart+(i-1)*N, hstart+i*N)
-        m=np.arange(wstart+(j-1)*N, wstart+j*N)
         z=X[starj:starj+N, stari:stari+N]
         print(z.shape)
         # z=X[m,l] 
