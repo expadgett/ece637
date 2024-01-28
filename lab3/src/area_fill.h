@@ -2,10 +2,10 @@ struct pixel {
     int m,n; /* m=row, n=col */
 };
 
-struct node {
+typedef struct node {
     struct pixel pixel;
     struct node *next;
-};
+}node ;
 
 void ConnectedNeighbors(
     struct pixel s,
