@@ -70,31 +70,3 @@ def plotPSF(Z, N, title="", save="", show=True):
     if show:
         plt.show()
 
-def plotSpecAnalyse(S, windowSize, plotTitle="", savePlot="", showPlot=True):
-    u = v = np.linspace(-np.pi, np.pi, windowSize)
-    us, vs = np.meshgrid(u, v)
-    
-    fig = plt.figure(figsize=(15, 6))
-    if plotTitle:
-        plt.title(plotTitle, color="blue", fontsize=10)
-    ax = plt.gca()
-    ax.set_axis_off()
-
-    ax = fig.add_subplot(121, projection="3d")
-    surf = ax.plot_surface(us, vs, S, cmap="coolwarm")
-    ax.set_xlabel(r"$\mu$ axis", color="red")
-    ax.set_ylabel(r"$\nu$ axis", color="red")
-    ax.set_title(r"$\log S(\mu, \nu)$", color="red", fontsize=12)
-    fig.colorbar(surf, shrink=0.5, aspect=5)
-
-    ax = fig.add_subplot(122)
-    cont = ax.contourf(us, vs, S, cmap="coolwarm")
-    ax.set_xlabel(r"$\mu$ axis", color="red")
-    ax.set_ylabel(r"$\nu$ axis", color="red")
-    ax.set_title(r"$\log S(\mu, \nu)$", color="red", fontsize=12)
-
-    if savePlot:
-        plt.savefig(savePlot, bbox_inches="tight")
-    
-    if showPlot:
-        plt.show()
