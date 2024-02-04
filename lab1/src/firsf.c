@@ -9,6 +9,7 @@
 #define fwidth 5
 
 void error(char *name);
+
 uint8_t clipped (double pixel){ //restrict values to less than 255 and greater than 0 like in example
   uint8_t color_pixel;
   if (pixel>255){

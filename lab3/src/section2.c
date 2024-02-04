@@ -94,14 +94,3 @@ int main (int argc, char **argv)
   return(0);
 }
 
-void error(char *name)
-{
-    printf("usage:  %s  image.tiff \n\n",name);
-    printf("this program reads in a 24-bit color TIFF image.\n");
-    printf("It then horizontally filters the green component, adds noise,\n");
-    printf("and writes out the result as an 8-bit image\n");
-    printf("with the name 'green.tiff'.\n");
-    printf("It also generates an 8-bit color image,\n");
-    printf("that swaps red and green components from the input image");
-    exit(1);
-}
