@@ -23,3 +23,13 @@ if __name__== '__main__':
 
     
 
+    xgray=glvl*np.ones((32*2,512*2))
+    funit=np.array([[255, 255, 0, 0],[255, 255, 0 , 0], [0 , 0, 255, 255],[ 0, 0, 255, 255]])
+    xcheck=mb.repmat(funit, 8*2, 16*16)
+    xunit=np.vstack((xcheck, xgray))
+    x=mb.repmat(xunit, 32, 4)
+    title="Checker Board Image 1024 with gray level="+str(glvl)
+    fname=f"checkerboard1024{glvl}.png"
+    editedImage(x+1, title, fname, True)
+
+    

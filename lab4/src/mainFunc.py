@@ -30,31 +30,33 @@ if __name__== '__main__':
     # fname=f"hist_"+image+".png"
     # histogram(x,title,fname,True)
     print(operation)
-    if (operation==1): #equalization
-        print("entered equalization")
-        #find cdf of image
-        cdftitle="CDF of "+image
-        cdfname=f"cdf_"+image+".png"
-        Y=Fs(x, cdftitle, cdfname, True)
+    # if (operation==1): #equalization
+    print("entered equalization")
+    #find cdf of image
+    cdftitle="CDF of "+image
+    cdfname=f"cdf2_"+image+".png"
+    Y=Fs(x, cdftitle, cdfname, True)
 
-        #equalize image
-        eqtitle=image+" Equalized Histogram2"
-        eqname=f"equailzed_hist2_"+image+".png"
-        Z=equalize(x, eqtitle, eqname,True)
+    #equalize image
+    eqtitle=image+" Equalized Histogram"
+    eqname=f"equailzed_hist_"+image+".png"
+    Z=equalize(x, eqtitle, eqname,True)
 
-        eqim="Equalized Image2"
-        eqimname=f"equalize2_"+image+".png" 
-        editedImage(Z, eqim, eqimname,True)
-    else: #(operation==2): #stretch
-        print("entered stretch")
-        shisttitle="Contrast Stretch Histogram"
-        shistname="stretch_hist"+image+".png"
-        T1=min(x.flatten())
-        T2=max(x.flatten())
-        print("T1: "+str(T1)+" T2: "+str(T2))
-        s=stretch(x, T1, T2, shisttitle, shistname)
-        print(s.shape)
-        sim=np.reshape(s,x.shape)
-        stitle="Contrast Stretch Image"
-        sname=f"stretch_"+image+".png"
-        editedImage(sim, stitle,sname, True)
+    eqim="Equalized Image"
+    eqimname=f"equalize_"+image+".png" 
+    editedImage(Z, eqim, eqimname,True)
+
+    # else: #(operation==2): #stretch
+    #     print("entered stretch")
+    #     shisttitle="Contrast Stretch Histogram"
+    #     shistname="stretch_hist"+image+".png"
+    #     T1=min(x.flatten())
+    #     T2=max(x.flatten())
+    #     print("T1: "+str(T1)+" T2: "+str(T2))
+    #     s=stretch(x, T1, T2, shisttitle, shistname)
+    #     print(s.shape)
+    #     sim=np.reshape(s,x.shape)
+    #     stitle="Contrast Stretch Image"
+    #     sname=f"stretch_"+image+".png"
+    #     editedImage(sim, stitle,sname, True)
+    
