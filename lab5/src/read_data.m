@@ -12,9 +12,9 @@
 % in various fonts.  Each image is reshaped and placed into a column
 % of a data matrix, "X".
 % 
-
+function [X]= read_data();
 % The following are strings used to assemble the data file names
-datadir='.';    % directory where the data files reside
+datadir='training_data';    % directory where the data files reside
 dataset={'arial','bookman_old_style','century','comic_sans_ms','courier_new',...
   'fixed_sys','georgia','microsoft_sans_serif','palatino_linotype',...
   'shruti','tahoma','times_new_roman'};
@@ -36,7 +36,7 @@ for ch=datachar
 end
 end
 
-return
+return;
 
 % display samples of the training data
 for k=1:length(dataset)
