@@ -144,7 +144,6 @@ def display_samples(X,ch):
     fig, axs = plt.subplots(3, 4)
     for k in range(len(dataset)):
         img=np.reshape(X[:,26*(k-1)+ind],(64,64))
-
         axs[k//4,k%4].imshow(img,cmap=plt.cm.gray, interpolation='none') 
         axs[k//4,k%4].set_title(dataset[k])
 
