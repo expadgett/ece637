@@ -3,17 +3,13 @@ CC = gcc
 CFLAGS = -std=c99 -Wall -pedantic
 BIN = ../bin
 
-all: section1 section2
+all: soln2 
 
 clean:
 	/bin/rm *.o $(BIN)/*
 
-OBJ = area_fill.o tiff.o allocate.o randlib.o qGGMRF.o solve.o 
+OBJ = tiff.o allocate.o randlib.o qGGMRF.o solve.o 
 
-section1: section1.o $(OBJ)
-	$(CC) $(CFLAGS) -o section1 section1.o $(OBJ) -lm
-	mv section1 $(BIN)
-
-section2: section2.o $(OBJ)
-	$(CC) $(CFLAGS) -o section2 section2.o $(OBJ) -lm
-	mv section2 $(BIN)
+soln2: soln2.o $(OBJ)
+	$(CC) $(CFLAGS) -o soln2 soln2.o $(OBJ) -lm
+	mv soln2 $(BIN)
