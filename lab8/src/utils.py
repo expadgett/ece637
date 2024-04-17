@@ -87,6 +87,10 @@ def dither(x, N):
         di=min(H-i, N)
         for j in range(0, W, N):
             dj=min(W-j, N)
+            # for m in range(di):
+            #     for n in range(dj):
+            #         if x[i+m][j+n]>T[]
+            #         b[i+m][j+n]=255
             b[i:i+di, j:j+dj]=255*(x[i:i+dj, j:j+dj]>T[:di, :dj])
     return b
     
