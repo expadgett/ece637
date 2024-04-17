@@ -51,11 +51,8 @@ def ungamma(im, gamma):
 
 def lpf(im, ksize, sigma):
     lpfdx=ksize//2
-    print(ksize)
     sq=np.square(range(-lpfdx, lpfdx+1)).reshape([ksize, 1])
-    print(sq)
     sq=sq+sq.T
-    print(sq)
     kernel=np.exp(-sq/(2*sigma))
     kernel/=kernel.sum()
     ky=kernel.shape[0]
@@ -72,13 +69,25 @@ def lpf(im, ksize, sigma):
             im_out[i][j]=(im[i-dy:i-dy+ky, j-dx:j-dx+kx]*kernel).sum()
     return im_out
 
-def dither(im, size):
-    H, W=im.shape
-    b=np.zeros_like(im, dtype=np.uint8)
-    IN=[[1, 2], [3, 0]]
-    for j in range(size):
-        I2N=np.block([[4*IN+1, 4*IN+2],[4*IN+3, 4*IN+4]])
-        IN=I2N
-    return I2N
+def idx_mat(size):
+    I2=[[1,2],[3,0]]
+    k=4*np.ones((2,2), dtype=int)
+    I=0
+    for j in range(size.bit_length()-1):
+        I=np.kron(k,I)+np.kron(I2, np.ones_like(I, dtype=int))
+    return I
+
+def dither(x, N):
+    H, W=x.shape
+    print(x.shape)
+    b=np.zeros_like(x, dtype=np.uint8)
+    print(idx_mat(N))
+    T=255*((idx_mat(N)+0.5)/(N*N))
+    for i in range(0, H, N):
+        di=min(H-i, N)
+        for j in range(0, W, N):
+            dj=min(W-j, N)
+            b[i:i+di, j:j+dj]=255*(x[i:i+dj, j:j+dj]>T[:di, :dj])
+    return b
     
     
