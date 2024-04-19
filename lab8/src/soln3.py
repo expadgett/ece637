@@ -6,27 +6,27 @@ import sympy
 import os 
 import scipy
 
-from utils import threshold, RMSE, fidelity, idx_mat, dither, ungamma
+from utils import threshold, RMSE, fidelity, idx_mat, dither, ungamma, diff_error
 
 if __name__== '__main__':
     #Load data
     im=sys.argv[1]
-    x=np.array(Image.open(os.path.join('bin', im)))
+    gx=np.array(Image.open(os.path.join('bin', im)))
     T=127
-    tx=(threshold(x, T))
+    tx=(threshold(gx, T))
     thresh_im=Image.fromarray(tx)
     thresh_im.save("t_house.tif")
-    rmse=RMSE(tx, x)
-    print(rmse)
-    fid=fidelity(tx, x)
-    print(fid)
+    rmse=RMSE(tx, gx)
+    print("RMSE: ", rmse)
+    fid=fidelity(tx, gx)
+    print("FID: ", fid)
 
-    x=ungamma(x, 2.2)
+    x=ungamma(gx, 2.2)
     b2=dither(x, 2)
     rmse2=RMSE(b2, x)
     fid2=fidelity(b2,x)
-    print(rmse2)
-    print(fid2)
+    print("RMSE2: ",rmse2)
+    print("FID2: ", fid2)
     dith2=Image.fromarray(b2.astype(np.uint8))
     dith2.save("dith2_house.tif")
 
@@ -36,8 +36,8 @@ if __name__== '__main__':
     fid4=fidelity(b4,x)
     dith4=Image.fromarray(b4.astype(np.uint8))
     dith4.save("dith4_house.tif")
-    print(rmse4)
-    print(fid4)
+    print("RMSE4: ", rmse4)
+    print("FID4: ",fid4)
 
     b8=dither(x, 8)
     rmse8=RMSE(b8, x)
@@ -45,13 +45,13 @@ if __name__== '__main__':
     dith8=Image.fromarray(b8.astype(np.uint8))
     dith8.save("dith8_house.tif")
 
-    print(rmse8)
-    print(fid8)
+    print("RMSE8: ", rmse8)
+    print("FID8: ",fid8)
 
-    b_error=diff_error(x, T)
-    ermse=RMSE(b_error,x)
-    efid=fidelity(b_error, x)
-    print(ermse)
-    print(efid)
-    diffe=Image.fromarray(b_error.astype(np.uint8))
-    diffe.save("diffise_error_house.tif")
+    # b_error=diff_error(x, T)
+    # ermse=RMSE(b_error,x)
+    # efid=fidelity(b_error, x)
+    # print(ermse)
+    # print(efid)
+    # diffe=Image.fromarray(b_error.astype(np.uint8))
+    # diffe.save("diffise_error_house.tif")
