@@ -79,7 +79,6 @@ def idx_mat(size):
 
 def dither(x, N):
     H, W=x.shape
-    print(x.shape)
     b=np.zeros_like(x, dtype=np.uint8)
     print(idx_mat(N))
     T=255*((idx_mat(N)+0.5)/(N*N))
@@ -94,4 +93,21 @@ def dither(x, N):
             b[i:i+di, j:j+dj]=255*(x[i:i+dj, j:j+dj]>T[:di, :dj])
     return b
     
-    
+def diff_error(x, T):
+    g101=3/16
+    g10=5/16
+    g11=1/16
+    g01=7/16
+    h=x.shape[0]
+    w=x.shape[1]
+    e=np.zeros(x.shape)
+    b=np.zeros(x.shape)
+    ftilde=np.zeros(w)
+    for j in range(1,w):
+        e[0, j]=x[0, j+g01*e[0,j-1]]
+        b[0, j]=255*(e[0,j]>T)
+        e[0,j]=e[0,j]-b[0,j]
+    for k in range(1,h):
+        ftilde[1:-1]=g101*e[k-1, 2:]+g10*e[k-1, 1:-1]+g11*e[k-1, :-2]
+        ftilde[-1]=10*e[k-1, -1]+g11*e[k-1,-2]
+        e[k, 0]=x[k,0]+g10*e[k-1, 0]+g101*e[k-1, -2]

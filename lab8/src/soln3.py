@@ -47,3 +47,11 @@ if __name__== '__main__':
 
     print(rmse8)
     print(fid8)
+
+    b_error=diff_error(x, T)
+    ermse=RMSE(b_error,x)
+    efid=fidelity(b_error, x)
+    print(ermse)
+    print(efid)
+    diffe=Image.fromarray(b_error.astype(np.uint8))
+    diffe.save("diffise_error_house.tif")
