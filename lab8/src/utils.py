@@ -69,11 +69,14 @@ def dither(x, N):
     b=np.zeros_like(x, dtype=np.uint8)
     print(idx_mat(N))
     T=255*((idx_mat(N)+0.5)/(N*N))
-    for i in range(0, H, N):
-        di=min(H-i, N)
-        for j in range(0, W, N):
-            dj=min(W-j, N)
-            b[i:i+di, j:j+dj]=255*(x[i:i+dj, j:j+dj]>T[:di, :dj])
+    for i in range(0, H):
+        for j in range(0, W):
+            m=i%N
+            n=j%N
+            if x[i,j]>T[m,n]:
+                b[i, j]=255
+            else:
+                b[i,j]=0
     return b
     
 def diff_error(x, T):
@@ -87,10 +90,18 @@ def diff_error(x, T):
     b=np.zeros(x.shape)
     ftilde=np.zeros(w)
     for j in range(1,w):
-        e[0, j]=x[0, j+g01*e[0,j-1]]
+        e[0, j]=x[0, j]+g01*e[0,j-1]
         b[0, j]=255*(e[0,j]>T)
         e[0,j]=e[0,j]-b[0,j]
     for k in range(1,h):
         ftilde[1:-1]=g101*e[k-1, 2:]+g10*e[k-1, 1:-1]+g11*e[k-1, :-2]
         ftilde[-1]=10*e[k-1, -1]+g11*e[k-1,-2]
-        e[k, 0]=x[k,0]+g10*e[k-1, 0]+g101*e[k-1, -2]
+        e[k, 0]=x[k,0]+g10*e[k-1, 0]+g101*e[k-1, 1]
+        b[k,0]=255*(e[k,0]>T)
+        e[k,0]=e[k,0]-b[k,0]
+        for j in range(1,w):
+            e[k,j]=x[k,j]+g01*e[k,j-1]+ftilde[j]
+            b[k,j]=255*(e[k,j]>T)
+            e[k,j]=e[k,j]-b[k,j]
+
+    return b
