@@ -80,7 +80,7 @@ def dither(x, N):
     return b
     
 def diff_error(x, T):
-    g101=3/16
+    g101=3/16 
     g10=5/16
     g11=1/16
     g01=7/16
@@ -95,7 +95,7 @@ def diff_error(x, T):
         e[0,j]=e[0,j]-b[0,j]
     for k in range(1,h):
         ftilde[1:-1]=g101*e[k-1, 2:]+g10*e[k-1, 1:-1]+g11*e[k-1, :-2]
-        ftilde[-1]=10*e[k-1, -1]+g11*e[k-1,-2]
+        ftilde[-1]=g10*e[k-1, -1]+g11*e[k-1,-2]
         e[k, 0]=x[k,0]+g10*e[k-1, 0]+g101*e[k-1, 1]
         b[k,0]=255*(e[k,0]>T)
         e[k,0]=e[k,0]-b[k,0]
